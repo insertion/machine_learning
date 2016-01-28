@@ -19,7 +19,7 @@ def file2matrix(filename):
 		# split line by '\t'
 		returnMat[index:]=listformline[0:3]
 		#write data into everyrows of matrix
-		classlabvector.append(listformline[-1])
+		classlabvector.append(int(listformline[-1]))
 		#list[-1] to get the last element
 		index+=1
 	return returnMat,classlabvector
@@ -49,15 +49,28 @@ def clssify0(inx,dataset,labels,k):
 	print(sortclasscount)
 	return sortclasscount[0][0]
 	pass
-
+def autonorm(dataset):
+	minvalues=dataset.min(0)
+	#min(axis=n),0 is the cloumns
+	maxvalues=dataset.max(0)
+	ranges=maxvalues-minvalues
+	print(ranges)
+	#normaldataset=numpy.zeros(numpy.shape(dataset))
+	#init the dataset
+	m=dataset.shape[0]
+	normaldataset=dataset-numpy.tile(minvalues,(m,1))
+	normaldataset=normaldataset/numpy.tile(ranges,(m,1))
+	#correspond element divides
+	return normaldataset
+	pass
 if __name__ == '__main__':
 	a,b=createDataset()
 	c=clssify0([1,0.5],a,b,3)
 	print(c)
-	datamat,datalab=file2matrix("datingTestSet.txt")
-	print(datamat[:,0])
+	datamat,datalab=file2matrix("datingTestSet2.txt")
+	datamat=autonorm(datamat)
 	fig=plt.figure()
 	ax=fig.add_subplot(111)
-	ax.scatter(datamat[:,1],datamat[:,2])
+	ax.scatter(datamat[:,0],datamat[:,1],50,15.0*numpy.array(datalab))
 	plt.show()
 	#print(datalab)
