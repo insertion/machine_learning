@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import numpy
-import matplotlib
 import matplotlib.pyplot as plt
 import operator
 def file2matrix(filename):
