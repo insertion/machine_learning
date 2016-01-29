@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import numpy
 import matplotlib.pyplot as plt
+from os import listdir
 import operator
 def file2matrix(filename):
 	#infiles everyline have four element ,last one is leble
@@ -71,11 +72,44 @@ def testclassfiy0():
 	errorcount = 0
 	for i in range(numtestvecs):
 		classifieresult=classify0(normmat[i,:],normmat[numtestvecs:m,:],datinglabels[numtestvecs:m],3)
-		print("the classify0 came back with :%d,the real answer is :%d" %(classifieresult,datinglabels[i]))
+		#print("the classify0 came back with :%d,the real answer is :%d" %(classifieresult,datinglabels[i]))
 		if classifieresult!=datinglabels[i]:
 			errorcount+=1
 			pass
 	print("the total error rate is %f" %(errorcount/float(numtestvecs)))	
+	pass
+def image2vector(filename):
+	returnvec=numpy.zeros((1,1024))
+	files=open(filename)
+	for i in range(32):
+		lines=files.readline()
+		#read a sigle line from files
+		for j in range(32):
+			returnvec[0,32*i+j]=int(lines[j])
+	return returnvec
+	pass
+def handwritingclasstest():
+	hwlabels=[]
+	trainingfilelist=listdir("trainingDigits")
+	m=len(trainingfilelist)
+	trainmat=numpy.zeros((m,1024))
+	for i in range(m):
+		filename=trainingfilelist[i]
+		classnumber=int(filename.split('_')[0])
+		hwlabels.append(classnumber)
+		trainmat[i,:]=image2vector("trainingDigits/%s" % filename)
+	testfilelsit=listdir("testDigits")
+	errorcount=0
+	n=len(testfilelsit)
+	for i in range(n):
+		testfilename=testfilelsit[i]
+		classnumber=int(testfilename.split('_')[0])
+		vectorundertest=image2vector("testDigits/%s" %testfilename)
+		classifieresult=classify0(vectorundertest,trainmat,hwlabels,3)
+		if classifieresult!=classnumber:
+			errorcount+=1.0
+			pass
+	print("the total error rate is :%f" %(errorcount/float(n)))
 	pass
 if __name__ == '__main__':
 	#
@@ -87,6 +121,7 @@ if __name__ == '__main__':
 	fig=plt.figure()
 	ax=fig.add_subplot(111)
 	ax.scatter(datamat[:,0],datamat[:,1],50,15.0*numpy.array(datalab))
-	plt.show()
+	#plt.show()
 	testclassfiy0()
+	handwritingclasstest()
 	#print(datalab)
