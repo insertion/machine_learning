@@ -121,7 +121,7 @@ if __name__ == '__main__':
 	fig=plt.figure()
 	ax=fig.add_subplot(111)
 	ax.scatter(datamat[:,0],datamat[:,1],50,15.0*numpy.array(datalab))
-	#plt.show()
+	plt.show()
 	testclassfiy0()
 	handwritingclasstest()
 	#print(datalab)
