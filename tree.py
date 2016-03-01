@@ -1,4 +1,5 @@
 from math import log
+import operator
 def calcShannonEnt(dataset):
     numEntries=len(dataset)#计算数据集的总长度
     labelCounts={}#建立种类字典
@@ -48,7 +49,23 @@ def chooseBestFeature(dataset):
         if infoGain>bestInfoGain:
             bestInfoGain=infoGain
             bestFeature=i
-    return bestFeature 
+    return bestFeature
+def majorityCnt(classList):
+    classCount={}
+    for vote in classList:
+        if vote not in classCount.keys():#字典的key中保存着类别
+            classCount[vote]=1
+        else:
+            classCount+=1
+    sortedclassCont=sorted(classCount.items(),key=operator.itemgetter(1),reverse=True)#itermgetter 定义了一个函数，指定对哪一维进行排序
+    return sortedclassCont[0][0]
+def createTree(dataset,labels):
+    classList=[example[-1] for example in dataset]
+    if classList.count(classList[0])==len(classList):
+        return classList
+    if len(dataset[0]==1):
+        return majorityCnt(classList)
+
 if __name__ == '__main__':
     myDat,labels=createDataset()
     print(myDat)
