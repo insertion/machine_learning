@@ -1,3 +1,4 @@
+#encoding:UTF-8
 from math import log
 import operator
 def calcShannonEnt(dataset):
@@ -60,15 +61,36 @@ def majorityCnt(classList):
     sortedclassCont=sorted(classCount.items(),key=operator.itemgetter(1),reverse=True)#itermgetter 定义了一个函数，指定对哪一维进行排序
     return sortedclassCont[0][0]
 def createTree(dataset,labels):
-    classList=[example[-1] for example in dataset]
-    if classList.count(classList[0])==len(classList):
+    classList=[example[-1] for example in dataset]#取数据集的最后一位作为类别
+    if classList.count(classList[0])==len(classList):#返回classlist[0]的出现次数
         return classList
-    if len(dataset[0]==1):
+    if len(dataset[0])==1:#表示数据集中的属性只剩下一个了,无法继续向下划分
         return majorityCnt(classList)
-
+    bestFeat=chooseBestFeature(dataset)#返回的是序号
+    bestFeatlabel=labels[bestFeat]#根据序号在labels中找到属性
+    myTree={bestFeatlabel:{}}#????嵌套字典，代表树
+    del(labels[bestFeat])#在列表中delete bestfeat
+    featvlaues=[example[bestFeat] for example in dataset]#列出所有bestfeat属性的值
+    uniquevlas=set(featvlaues)#删除重复项
+    for value in uniquevlas:#对于最佳属性的所有可能值
+        sublabels=labels[:]
+        myTree[bestFeatlabel][value]=createTree(spiltDataset(dataset,bestFeat,value),sublabels)
+        #多维字典，类似多维数组，value为key,node
+    return myTree
+def storeTree(inputTree,filename):
+    import pickle
+    fw=open(filename,'wb')
+    pickle.dump(inputTree,fw)
+    fw.close()
+def getTree(filename):
+    import pickle
+    fr=open(filename)
+    return pickle.load(fr)
 if __name__ == '__main__':
     myDat,labels=createDataset()
-    print(myDat)
-    print(calcShannonEnt(myDat))
-    print(spiltDataset(myDat,0,0))
-    print(chooseBestFeature(myDat))
+    #print(myDat)
+    #print(calcShannonEnt(myDat))
+    #print(spiltDataset(myDat,0,0))
+    #print(chooseBestFeature(myDat))
+    #storeTree(createTree(myDat,labels),'classifierTree.txt')
+    storeTree(createTree(myDat,labels),'ss.txt')
